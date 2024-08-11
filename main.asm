@@ -5,8 +5,6 @@ default rel
 
 section .data
 rand: db 0
-count: dq 0
-max: dw 0
 
 section .text
 global main
@@ -14,25 +12,6 @@ global main
 main:
     xor r12, r12
     xor r15, r15
-
-	spawner:
-		mov rax, 58
-		syscall
-		
-		cmp rax, 0
-		je loop
-
-        inc r15
-        cmp r15, 1000000
-        jne spawner
-
-	waiter:
-		cmp qword [count], 1000000
-		jne waiter
-
-	mov rsi, [max]
-	call iprintln
-	jmp exit
 
     loop:
         xor r14, r14
@@ -53,13 +32,18 @@ main:
             cmp r13w, 231
             jne innerloop
 
-        cmp r14w, word [max]
+        cmp r14w, r12w
         jl skip
-        mov [max], r14w
+        mov r12w, r14w
         skip:
 
-	inc qword [count]
-	mov rsi, [count]
+	inc r15
+	mov rsi, r15
+	call iprintln
+	cmp r15, 1000000
+	jne loop
+
+	mov rsi, r12
 	call iprintln
 
 	exit:
